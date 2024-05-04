@@ -15,32 +15,27 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     private readonly IError _error = default!;
 
     /// <summary>
-    /// Errors
+    /// Error
     /// </summary>
     public IError? Error
     {
         get
         {
-            if (IsOk)
-            {
-                throw new InvalidOperationException();
-            }
-
             return _error;
         }
     }
 
     /// <summary>
-    /// IsFailed
+    /// Is result failed?
     /// </summary>
     [MemberNotNullWhen(true, nameof(Error))]
     public bool IsFailed => Error != null;
 
     /// <summary>
-    /// IsSucceeded
+    /// Is result is succeeded?
     /// </summary>
     [MemberNotNullWhen(false, nameof(Error))]
-    public bool IsOk => Error == null;
+    public bool IsSucceeded => Error == null;
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
@@ -49,12 +44,12 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
 
     public bool Equals(Result other)
     {
-        return IsOk == other.IsOk;
+        return IsSucceeded == other.IsSucceeded;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(typeof(Result), IsOk);
+        return HashCode.Combine(typeof(Result), IsSucceeded);
     }
 
     /// <summary>
@@ -69,41 +64,11 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
         else
         {
             return $"";
-        }        
-    }
-
-    /// <summary>
-    /// Match
-    /// </summary>
-    public void Match(Action succeeded, Action<IError> failed)
-    {
-        if (IsOk)
-        {
-            succeeded();
-        }
-        else
-        {
-            failed(Error);
         }
     }
 
     /// <summary>
-    /// Match
-    /// </summary>
-    public TResult Match<TResult>(Func<TResult> succeeded, Func<IError, TResult> failed)
-    {
-        if (IsOk)
-        {
-            return succeeded();
-        }
-        else
-        {
-            return failed(Error);
-        }
-    }
-
-    /// <summary>
-    /// Ok
+    /// Creates a succeeded result.
     /// </summary>
     public static Result Ok()
     {
@@ -111,23 +76,15 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     }
 
     /// <summary>
-    /// Ok
+    /// Creates a succeeded result with value.
     /// </summary>
-    public static Result<T> Ok<T>()
-    {
-        return Result<T>.Ok();
-    }
-
-    /// <summary>
-    /// Ok
-    /// </summary>
-    public static Result<T> Ok<T>(T value)
+    public static Result<T> Ok<T>(T value = default!)
     {
         return Result<T>.Ok(value);
     }
 
     /// <summary>
-    /// Failed
+    /// Creates a failed result.
     /// </summary>
     public static Result Failed(string message)
     {
@@ -135,7 +92,7 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     }
 
     /// <summary>
-    /// Failed
+    /// Creates a failed result.
     /// </summary>
     public static Result Failed(Exception exception)
     {
@@ -143,11 +100,27 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     }
 
     /// <summary>
-    /// Failed
+    /// Creates a failed result.
     /// </summary>
     public static Result Failed(IError error)
     {
         return new Result(error);
+    }
+
+    /// <summary>
+    /// Creates a failed result.
+    /// </summary>
+    public static Result<T> Failed<T>(string message)
+    {
+        return Result<T>.Failed(message);
+    }
+
+    /// <summary>
+    /// Creates a failed result.
+    /// </summary>
+    public static Result<T> Failed<T>(IError error)
+    {
+        return Result<T>.Failed(error);
     }
 
     public static TResult Try<TResult>(Func<TResult> action)
@@ -176,14 +149,14 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
         }
     }
 
-    public static Result OkIf(bool isSucceded, IError error)
+    public static Result OkIf(bool isSucceeded, Func<IError> error)
     {
-        return isSucceded ? Ok() : Failed(error);
+        return isSucceeded ? Ok() : Failed(error());
     }
 
-    public static Result FailedIf(bool isFailed, string error)
+    public static Result FailedIf(bool isFailed, Func<IError> error)
     {
-        return isFailed ? Failed(error) : Ok();
+        return isFailed ? Failed(error()) : Ok();
     }
 
     public static bool operator ==(Result left, Result right)

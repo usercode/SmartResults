@@ -4,13 +4,13 @@
 
 namespace SmartResults;
 
-public static class ResultExtensions
+public static class ResultThenExtensions
 {
     public static TResultOut Then<TResultIn, TResultOut>(this TResultIn result, Func<TResultIn, TResultOut> action)
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
     {
-        if (result.IsOk)
+        if (result.IsSucceeded)
         {
             return action(result);
         }
@@ -24,7 +24,7 @@ public static class ResultExtensions
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
     {
-        if (result.IsOk)
+        if (result.IsSucceeded)
         {
             return await action(result);
         }
@@ -40,7 +40,7 @@ public static class ResultExtensions
     {
         TResultIn r = await result;
 
-        if (r.IsOk)
+        if (r.IsSucceeded)
         {
             return action(r);
         }
@@ -56,7 +56,7 @@ public static class ResultExtensions
     {
         TResultIn r = await result;
 
-        if (r.IsOk)
+        if (r.IsSucceeded)
         {
             return await action(r);
         }

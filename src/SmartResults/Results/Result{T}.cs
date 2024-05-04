@@ -20,7 +20,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     private readonly T _value = default!;
 
     /// <summary>
-    /// Value
+    /// Gets the result value.
     /// </summary>
     public T Value
     {
@@ -38,32 +38,27 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     private readonly IError _error = default!;
 
     /// <summary>
-    /// Errors
+    /// Error
     /// </summary>
     public IError? Error 
     { 
         get
         {
-            if (IsOk)
-            {
-                throw new InvalidOperationException();
-            }
-
             return _error;
         }
     }
 
     /// <summary>
-    /// IsFailed
+    /// Is result failed?
     /// </summary>
     [MemberNotNullWhen(true, nameof(Error))]
     public bool IsFailed => Error is not null;
 
     /// <summary>
-    /// IsSucceeded
+    /// Is result succeeded?
     /// </summary>
     [MemberNotNullWhen(false, nameof(Error))]
-    public bool IsOk => Error is null;
+    public bool IsSucceeded => Error is null;
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
@@ -72,7 +67,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
 
     public bool Equals(Result<T> other)
     {
-        return IsOk && other.IsOk && EqualityComparer<T>.Default.Equals(_value, other._value);
+        return IsSucceeded && other.IsSucceeded && EqualityComparer<T>.Default.Equals(_value, other._value);
     }
 
     public override int GetHashCode()
@@ -93,40 +88,10 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
         {
             return $"{Value}";
         }
-    }
+    }   
 
     /// <summary>
-    /// Match
-    /// </summary>
-    public void Match(Action<T> succeeded, Action<IError> failed)
-    {
-        if (IsOk)
-        {
-            succeeded(Value);
-        }
-        else
-        {
-            failed(Error);
-        }
-    }
-
-    /// <summary>
-    /// Match
-    /// </summary>
-    public TResult Match<TResult>(Func<T, TResult> succeeded, Func<IError, TResult> failed)
-    {
-        if (IsOk)
-        {
-            return succeeded(Value);
-        }
-        else
-        {
-            return failed(Error);
-        }
-    }
-
-    /// <summary>
-    /// Ok
+    /// Creates a succeeded result.
     /// </summary>
     public static Result<T> Ok()
     {
@@ -134,7 +99,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     }
 
     /// <summary>
-    /// Ok
+    /// Creates a succeeded result with value.
     /// </summary>
     public static Result<T> Ok(T value)
     {
@@ -142,7 +107,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     }
 
     /// <summary>
-    /// Failed
+    /// Creates a failed result.
     /// </summary>
     public static Result<T> Failed(string message)
     {
@@ -150,7 +115,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     }
 
     /// <summary>
-    /// Failed
+    /// Creates a failed result.
     /// </summary>
     public static Result<T> Failed(Exception exception)
     {
@@ -158,7 +123,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     }
 
     /// <summary>
-    /// Failed
+    /// Creates a failed result.
     /// </summary>
     public static Result<T> Failed(IError error)
     {

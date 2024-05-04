@@ -9,16 +9,16 @@ namespace SmartResults;
 public interface IResult<TResult>
 {
     /// <summary>
-    /// IsFailed
+    /// Is result failed?
     /// </summary>
     [MemberNotNullWhen(true, nameof(Error))]
     public bool IsFailed { get; }
 
     /// <summary>
-    /// IsSucceeded
+    /// Is result succeeded?
     /// </summary>
     [MemberNotNullWhen(false, nameof(Error))]
-    public bool IsOk { get; }
+    public bool IsSucceeded { get; }
 
     /// <summary>
     /// Error
