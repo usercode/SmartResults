@@ -4,7 +4,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>true</ImplicitUsings>
 		<Authors>usercode</Authors>
-		<Description>SmartResults</Description>
+		<Description>Lightweight .NET library to use result pattern instead of throwing exceptions.</Description>
 		<PackageProjectUrl>https://github.com/usercode/SmartResults</PackageProjectUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
