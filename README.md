@@ -3,6 +3,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## How to use it
+- Result and Result{T} are structs to prevent memory allocation
+- Chaining flow
+- Exception flow
 
 ### Create and use results
 ```csharp
@@ -24,6 +27,13 @@ if (r1.IsFailed)
 }
 ```
 
+### Use match to evaluate the result
+```csharp
+Result r1 = Result.Ok(100);
+
+int i = r1.Match(value => 1, error => 0);
+```
+
 ### Implicit conversion
 
 ```csharp
@@ -41,8 +51,12 @@ int value = Create(); //throw exception if result is failed
 ### Chaining flow
 
 ```csharp
-Create().Then(x => Console.WriteLine(x));
+Result result1 = Create().Then(x => Console.WriteLine(x));
 
-await CreateAsync().ThenAsync(x => Console.WriteLine(x));
+Result result2 = Create().ThenAsync(async x => await Service.ExecuteAsync(x));
+
+Result result3 = await CreateAsync().ThenAsync(x => Console.WriteLine(x));
+
+Result result4 = await CreateAsync().ThenAsync(async x => await Service.ExecuteAsync(x));
 ```
 
