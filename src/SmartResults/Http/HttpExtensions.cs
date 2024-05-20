@@ -9,7 +9,12 @@ namespace SmartResults;
 
 public static class HttpExtensions
 {
-    public static async Task<Result> ToResultAsync(this HttpResponseMessage response)
+    public static async Task<Result> ToResultAsync(this Task<HttpResponseMessage> responseTask, JsonSerializerOptions? jsonSerializerOptions = null)
+    {
+        return await (await responseTask).ToResultAsync(jsonSerializerOptions);
+    }
+
+    public static async Task<Result> ToResultAsync(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
     {
         if (response.IsSuccessStatusCode)
         {
@@ -17,12 +22,17 @@ public static class HttpExtensions
         }
         else
         {
-            HttpErrorMessage? error = await response.Content.ReadFromJsonAsync<HttpErrorMessage>();
+            HttpErrorMessage? error = await response.Content.ReadFromJsonAsync<HttpErrorMessage>(jsonSerializerOptions);
 
             ArgumentNullException.ThrowIfNull(error);
 
             return Result.Failed(error);
         }
+    }
+
+    public static async Task<Result<T>> ToResultAsync<T>(this Task<HttpResponseMessage> responseTask, JsonSerializerOptions? jsonSerializerOptions = null)
+    {
+        return await (await responseTask).ToResultAsync<T>(jsonSerializerOptions);
     }
 
     public static async Task<Result<T>> ToResultAsync<T>(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)

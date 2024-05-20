@@ -13,7 +13,7 @@ Result failed3 = Result.Failed(new Error());
 
 Result<int> value = Result.Ok(100);
 
-if (r1.IsOk)
+if (r1.IsSucceeded)
 {
    Console.WriteLine(r1.Value);
 }
