@@ -29,7 +29,7 @@ if (r1.IsFailed)
 
 ### Use match to evaluate the result
 ```csharp
-Result r1 = Result.Ok(100);
+Result<int> r1 = Result.Ok(100);
 
 int i = r1.Match(value => 1, error => 0);
 ```
