@@ -53,7 +53,7 @@ int value = Create(); //throw exception if result is failed
 ```csharp
 Result result1 = Create().Then(x => Console.WriteLine(x));
 
-Result result2 = Create().ThenAsync(async x => await Service.ExecuteAsync(x));
+Result result2 = await Create().ThenAsync(async x => await Service.ExecuteAsync(x));
 
 Result result3 = await CreateAsync().ThenAsync(x => Console.WriteLine(x));
 
