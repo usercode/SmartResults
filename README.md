@@ -4,7 +4,7 @@
 
 ## How to use it
 - Result and Result{T} are structs to prevent memory allocation
-- Integrated JsonSerializerConverter for Result and Result<T>
+- Integrated JsonConverter for Result and Result<T>
 - Chaining flow
 - Exception flow
 
