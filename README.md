@@ -4,34 +4,52 @@
 
 ## How to use it
 - Result and Result{T} are structs to prevent memory allocation
+- Integrated JsonSerializerConverter for Result and Result<T>
 - Chaining flow
 - Exception flow
 
 ### Create and use results
 ```csharp
-Result r1 = Result.Ok();
-Result failed1 = Result.Failed("Error");
-Result failed2 = Result.Failed(new Exception());
-Result failed3 = Result.Failed(new Error());
+Result result = Result.Ok();
 
-Result<int> value = Result.Ok(100);
-
-if (r1.IsSucceeded)
+if (result.IsSucceeded)
 {
-   Console.WriteLine(r1.Value);
+   Console.WriteLine("Completed");
+}
+else
+{
+   Console.WriteLine(result.Error.Message);
+}
+```
+
+### Create and use results with value
+```csharp
+Result<int> result = Result.Ok(100);
+
+if (result.IsSucceeded)
+{
+   Console.WriteLine(result.Value);
+}
+```
+
+### Create and use failed results
+```csharp
+Result<int> result = Result.Failed("Something is wrong!");
+Result<int> result = Result.Failed(new Error(..));
+Result<int> result = Result.Failed(new Exception());
+
+if (result.IsFailed)
+{
+	Console.WriteLine(result.Error.Message);
 }
 
-if (r1.IsFailed)
-{
-   Console.WriteLine(r1.Error.Message);
-}
 ```
 
 ### Use match to evaluate the result
 ```csharp
 Result<int> r1 = Result.Ok(100);
 
-int i = r1.Match(value => 1, error => 0);
+bool i = r1.Match(value => true, error => false);
 ```
 
 ### Implicit conversion

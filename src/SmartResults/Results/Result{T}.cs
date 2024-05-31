@@ -1,10 +1,13 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using SmartResults.Json;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace SmartResults;
 
 /// <summary>
 /// Result
 /// </summary>
+[JsonConverter(typeof(ResultJsonConverterFactory))]
 public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
 {
     private Result(T value)
@@ -14,7 +17,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
 
     private Result(IError error)
     {
-        Error = error;
+        _error = error;
     }
 
     private readonly T _value = default!;
@@ -35,22 +38,35 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
         }
     }
 
+    private readonly IError? _error;
+
     /// <summary>
     /// Error
     /// </summary>
-    public IError? Error { get; }
+    public IError? Error
+    {
+        get
+        {
+            if (IsSucceeded)
+            {
+                throw new InvalidOperationException();
+            }
+
+            return _error;
+        }
+    }
 
     /// <summary>
     /// Is result failed?
     /// </summary>
     [MemberNotNullWhen(true, nameof(Error))]
-    public bool IsFailed => Error is not null;
+    public bool IsFailed => _error is not null;
 
     /// <summary>
     /// Is result succeeded?
     /// </summary>
     [MemberNotNullWhen(false, nameof(Error))]
-    public bool IsSucceeded => Error is null;
+    public bool IsSucceeded => _error is null;
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
