@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace SmartResults;
 
-public static class HttpExtensions
+public static class HttpResponseMessageExtensions
 {
     public static async Task<Result> ToResultAsync(this Task<HttpResponseMessage> responseTask, JsonSerializerOptions? jsonSerializerOptions = null)
     {
@@ -16,18 +16,11 @@ public static class HttpExtensions
 
     public static async Task<Result> ToResultAsync(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        if (response.IsSuccessStatusCode)
-        {
-            return Result.Ok();
-        }
-        else
-        {
-            HttpErrorMessage? error = await response.Content.ReadFromJsonAsync<HttpErrorMessage>(jsonSerializerOptions);
+        response.EnsureSuccessStatusCode();
 
-            ArgumentNullException.ThrowIfNull(error);
+        Result result = await response.Content.ReadFromJsonAsync<Result>(jsonSerializerOptions);
 
-            return Result.Failed(error);
-        }
+        return result;
     }
 
     public static async Task<Result<T>> ToResultAsync<T>(this Task<HttpResponseMessage> responseTask, JsonSerializerOptions? jsonSerializerOptions = null)
@@ -37,21 +30,10 @@ public static class HttpExtensions
 
     public static async Task<Result<T>> ToResultAsync<T>(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        if (response.IsSuccessStatusCode)
-        {
-            T? result = await response.Content.ReadFromJsonAsync<T>(jsonSerializerOptions);
+        response.EnsureSuccessStatusCode();
 
-            ArgumentNullException.ThrowIfNull(result);
+        Result<T> result = await response.Content.ReadFromJsonAsync<Result<T>>(jsonSerializerOptions);
 
-            return Result.Ok(result);
-        }
-        else
-        {
-            HttpErrorMessage? error = await response.Content.ReadFromJsonAsync<HttpErrorMessage>();
-
-            ArgumentNullException.ThrowIfNull(error);
-
-            return Result<T>.Failed(error);
-        }
+        return result;
     }
 }

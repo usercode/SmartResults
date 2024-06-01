@@ -12,11 +12,6 @@ internal class ResultJsonConverterFactory : JsonConverterFactory
 
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {
-        if (typeToConvert is null)
-        {
-            return null;
-        }
-
         Type valueType = typeToConvert.GetGenericArguments()[0];
         Type converterType = typeof(ResultJsonConverter<>).MakeGenericType(valueType);
 

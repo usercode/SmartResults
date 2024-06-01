@@ -45,19 +45,34 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     [MemberNotNullWhen(false, nameof(Error))]
     public bool IsSucceeded => _error == null;
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
+    public override bool Equals(object? obj)
     {
         return obj is Result result && Equals(result);
     }
 
     public bool Equals(Result other)
     {
-        return IsSucceeded == other.IsSucceeded;
+        if (IsSucceeded)
+        {
+            if (other.IsSucceeded)
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if (other.IsFailed)
+            {
+                return EqualityComparer<IError>.Default.Equals(Error, other.Error);
+            }
+        }
+
+        return false;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(typeof(Result), IsSucceeded);
+        return HashCode.Combine(IsSucceeded, Error);
     }
 
     /// <summary>
@@ -65,13 +80,13 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     /// </summary>
     public override string ToString()
     {
-        if (IsFailed)
+        if (IsSucceeded)
         {
-            return $"Error: {Error}";
+            return "Succeeded";
         }
         else
         {
-            return $"";
+            return $"Failed: {Error}";
         }
     }
 
@@ -84,7 +99,7 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     }
 
     /// <summary>
-    /// Creates a succeeded result with value.
+    /// Creates a succeeded result with <typeparamref name="T"/> value.
     /// </summary>
     public static Result<T> Ok<T>(T value = default!)
     {
@@ -131,29 +146,31 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
         return Result<T>.Failed(error);
     }
 
-    public static TResult Try<TResult>(Func<TResult> action)
-        where TResult : IResult<TResult>
+    public static Result Try(Action action)
     {
         try
         {
-            return action();
+            action();
+
+            return Ok();
         }
         catch (Exception ex)
         {
-            return TResult.Failed(SmartResults.Error.FromException(ex));
+            return Failed(SmartResults.Error.FromException(ex));
         }
     }
 
-    public static async Task<TResult> TryAsync<TResult>(Func<Task<TResult>> action)
-        where TResult : IResult<TResult>
+    public static async Task<Result> TryAsync(Func<Task> action)
     {
         try
         {
-            return await action();
+            await action();
+
+            return Ok();
         }
         catch (Exception ex)
         {
-            return TResult.Failed(SmartResults.Error.FromException(ex));
+            return Failed(SmartResults.Error.FromException(ex));
         }
     }
 
@@ -174,6 +191,6 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
 
     public static bool operator !=(Result left, Result right)
     {
-        return !(left == right);
+        return left.Equals(right) == false;
     }    
 }

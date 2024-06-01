@@ -59,7 +59,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     /// <summary>
     /// Is result failed?
     /// </summary>
-    [MemberNotNullWhen(true, nameof(Error))]
+    [MemberNotNullWhen(true, nameof(Error))]    
     public bool IsFailed => _error is not null;
 
     /// <summary>
@@ -68,19 +68,34 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     [MemberNotNullWhen(false, nameof(Error))]
     public bool IsSucceeded => _error is null;
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
+    public override bool Equals(object? obj)
     {
         return obj is Result<T> result && Equals(result);
     }
 
     public bool Equals(Result<T> other)
     {
-        return IsSucceeded && other.IsSucceeded && EqualityComparer<T>.Default.Equals(_value, other._value);
+        if (IsSucceeded)
+        {
+            if (other.IsSucceeded)
+            {
+                return EqualityComparer<T>.Default.Equals(Value, other.Value);
+            }
+        }
+        else
+        {
+            if (other.IsFailed)
+            {
+                return EqualityComparer<IError>.Default.Equals(Error, other.Error);
+            }
+        }
+
+        return false;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(typeof(Result<T>), Value);
+        return HashCode.Combine(IsSucceeded, Value, Error);
     }
 
     /// <summary>
@@ -88,15 +103,15 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     /// </summary>
     public override string ToString()
     {
-        if (IsFailed)
+        if (IsSucceeded)
         {
-            return $"Error: {Error}";
+            return $"Succeeded: {Value}";
         }
         else
         {
-            return $"{Value}";
+            return $"Failed: {Error}";
         }
-    }   
+    }
 
     /// <summary>
     /// Creates a succeeded result.
@@ -165,6 +180,6 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
 
     public static bool operator !=(Result<T> left, Result<T> right)
     {
-        return !(left == right);
+        return left.Equals(right) == false;
     }    
 }

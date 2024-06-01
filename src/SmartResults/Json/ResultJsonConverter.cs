@@ -20,7 +20,7 @@ internal class ResultJsonConverter : JsonConverter<Result>
                         reader.Read();
                         message = reader.GetString();
                     }
-                    else if (reader.ValueSpan.SequenceEqual("isSucceeded"u8))
+                    else if (reader.ValueSpan.SequenceEqual("succeeded"u8))
                     {
                         reader.Read();
                         isSucceeded = reader.GetBoolean();
@@ -55,7 +55,7 @@ internal class ResultJsonConverter : JsonConverter<Result>
     public override void Write(Utf8JsonWriter writer, Result value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteBoolean("isSucceeded"u8, value.IsSucceeded);
+        writer.WriteBoolean("succeeded"u8, value.IsSucceeded);
 
         if (value.IsFailed)
         {

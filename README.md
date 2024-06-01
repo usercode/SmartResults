@@ -1,10 +1,12 @@
 # SmartResults
+Lightweight .NET library to use result pattern instead of throwing exceptions.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## How to use it
 - Result and Result{T} are structs to prevent memory allocation
-- Integrated JsonConverter for Result and Result<T>
+- Integrated JsonConverter
+- Extensions for HttpResponseMessage
 - Chaining flow
 - Exception flow
 
@@ -47,24 +49,23 @@ if (result.IsFailed)
 
 ### Use match to evaluate the result
 ```csharp
-Result<int> r1 = Result.Ok(100);
+Result<int> result = Result.Ok(100);
 
-bool i = r1.Match(value => true, error => false);
+bool b = result.Match(value => true, error => false);
 ```
 
 ### Implicit conversion
 
 ```csharp
-Result<int> value = 100;
+Result<int> result = 100;
 
-int number = value;
+int value = result;
 ```
 
 ### Use exception flow by implicit operator
 ```csharp
 int value = Create(); //throw exception if result is failed
 ```
-
 
 ### Chaining flow
 
@@ -78,3 +79,10 @@ Result result3 = await CreateAsync().ThenAsync(x => Console.WriteLine(x));
 Result result4 = await CreateAsync().ThenAsync(async x => await Service.ExecuteAsync(x));
 ```
 
+### Use HttpClient extensions
+
+```csharp
+Result result1 = await httpClient.GetAsync("/").ToResultAsync();
+
+Result<int> result2 = await httpClient.GetAsync("/").ToResultAsync<int>();
+```

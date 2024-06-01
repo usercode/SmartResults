@@ -19,4 +19,9 @@ public class Error(string message, Exception? exception = null) : IError
     /// Exception
     /// </summary>
     public Exception? Exception { get; } = exception;
+
+    public override string ToString()
+    {
+        return Message;
+    }
 }

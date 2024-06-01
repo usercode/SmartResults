@@ -7,13 +7,13 @@ public class MatchTest
     [Fact]
     public void MatchSucceeded()
     {
-        Result.Ok().Match(() => Assert.True(true), err => Assert.True(false));
+        Result.Ok().Match(() => Assert.True(true), err => Assert.Fail());
     }
 
     [Fact]
     public void MatchFailed()
     {
-        Result.Failed("Error").Match(() => Assert.True(false), error => Assert.True(true));
+        Result.Failed("Error").Match(() => Assert.Fail(), error => Assert.True(true));
     }
 
     [Fact]
