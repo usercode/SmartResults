@@ -16,8 +16,6 @@ public static class HttpResponseMessageExtensions
 
     public static async Task<Result> ToResultAsync(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        response.EnsureSuccessStatusCode();
-
         Result result = await response.Content.ReadFromJsonAsync<Result>(jsonSerializerOptions);
 
         return result;
@@ -30,8 +28,6 @@ public static class HttpResponseMessageExtensions
 
     public static async Task<Result<T>> ToResultAsync<T>(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        response.EnsureSuccessStatusCode();
-
         Result<T> result = await response.Content.ReadFromJsonAsync<Result<T>>(jsonSerializerOptions);
 
         return result;
