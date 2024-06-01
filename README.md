@@ -2,6 +2,7 @@
 Lightweight .NET library to use result pattern instead of throwing exceptions.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![NuGet](https://img.shields.io/nuget/vpre/SmartResults.svg)](https://www.nuget.org/packages/SmartResults/)
 
 ## How to use it
 - Result and Result{T} are structs to prevent memory allocation
