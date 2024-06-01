@@ -18,15 +18,15 @@ internal class ResultJsonConverter : JsonConverter<Result>
                 case JsonTokenType.PropertyName:
                     string? property = reader.GetString();
 
-                    if (property == options.ConvertName(JsonPropertyConstants.MessageProperty))
-                    {
-                        reader.Read();
-                        message = reader.GetString();
-                    }
-                    else if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
+                    if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
                     {
                         reader.Read();
                         succeeded = reader.GetBoolean();
+                    }
+                    else if (property == options.ConvertName(JsonPropertyConstants.MessageProperty))
+                    {
+                        reader.Read();
+                        message = reader.GetString();
                     }
                     break;
 

@@ -6,6 +6,9 @@ namespace SmartResults;
 
 public static class ResultThenExtensions
 {
+    /// <summary>
+    /// If the result is succeeded, the action is executed.
+    /// </summary>
     public static TResultOut Then<TResultIn, TResultOut>(this TResultIn result, Func<TResultIn, TResultOut> action)
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
@@ -20,6 +23,9 @@ public static class ResultThenExtensions
         }
     }
 
+    /// <summary>
+    /// If the result is succeeded, the action is executed.
+    /// </summary>
     public static async Task<TResultOut> ThenAsync<TResultIn, TResultOut>(this TResultIn result, Func<TResultIn, Task<TResultOut>> action)
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
@@ -34,6 +40,9 @@ public static class ResultThenExtensions
         }
     }
 
+    /// <summary>
+    /// If the result is succeeded, the action is executed.
+    /// </summary>
     public static async Task<TResultOut> ThenAsync<TResultIn, TResultOut>(this Task<TResultIn> result, Func<TResultIn, TResultOut> action)
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
@@ -50,6 +59,9 @@ public static class ResultThenExtensions
         }
     }
 
+    /// <summary>
+    /// If the result is succeeded, the action is executed.
+    /// </summary>
     public static async Task<TResultOut> ThenAsync<TResultIn, TResultOut>(this Task<TResultIn> result, Func<TResultIn, Task<TResultOut>> action)
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>

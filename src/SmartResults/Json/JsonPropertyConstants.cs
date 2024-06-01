@@ -16,7 +16,6 @@ public static class JsonPropertyConstants
         }
         else
         {
-
             return name;
         }
     }

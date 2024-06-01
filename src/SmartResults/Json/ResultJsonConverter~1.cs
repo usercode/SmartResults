@@ -19,12 +19,7 @@ internal class ResultJsonConverter<T> : JsonConverter<Result<T>>
                 case JsonTokenType.PropertyName:
                     string? property = reader.GetString();
 
-                    if (property == options.ConvertName(JsonPropertyConstants.MessageProperty))
-                    {
-                        reader.Read();
-                        message = reader.GetString();
-                    }
-                    else if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
+                    if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
                     {
                         reader.Read();
                         succeeded = reader.GetBoolean();
@@ -33,6 +28,11 @@ internal class ResultJsonConverter<T> : JsonConverter<Result<T>>
                     {
                         reader.Read();
                         value = JsonSerializer.Deserialize<T>(ref reader, options);
+                    }
+                    else if (property == options.ConvertName(JsonPropertyConstants.MessageProperty))
+                    {
+                        reader.Read();
+                        message = reader.GetString();
                     }
                     break;
 
