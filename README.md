@@ -17,11 +17,11 @@ Result result = Result.Ok();
 
 if (result.IsSucceeded)
 {
-   Console.WriteLine("Completed");
+   Console.WriteLine("Succeeded");
 }
 else
 {
-   Console.WriteLine(result.Error.Message);
+   Console.WriteLine(result.Error);
 }
 ```
 
@@ -33,6 +33,10 @@ if (result.IsSucceeded)
 {
    Console.WriteLine(result.Value);
 }
+else
+{
+   Console.WriteLine(result.Error);
+}
 ```
 
 ### Create and use failed results
@@ -43,7 +47,7 @@ Result<int> result = Result.Failed(new Exception());
 
 if (result.IsFailed)
 {
-	Console.WriteLine(result.Error.Message);
+   Console.WriteLine(result.Error);
 }
 
 ```
@@ -65,7 +69,7 @@ int value = result;
 
 ### Use exception flow by implicit operator
 ```csharp
-int value = Create(); //throw exception if result is failed
+int value = Create(); //throws exception if result is failed
 ```
 
 ### Chaining flow
