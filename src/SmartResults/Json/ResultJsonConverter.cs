@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace SmartResults.Json;
@@ -7,7 +8,7 @@ internal class ResultJsonConverter : JsonConverter<Result>
 {
     public override Result Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        bool? isSucceeded = null;
+        bool? succeeded = null;
         string? message = null;
 
         while (reader.Read())
@@ -15,15 +16,17 @@ internal class ResultJsonConverter : JsonConverter<Result>
             switch (reader.TokenType)
             {
                 case JsonTokenType.PropertyName:
-                    if (reader.ValueSpan.SequenceEqual("message"u8))
+                    string? property = reader.GetString();
+
+                    if (property == options.ConvertName(JsonPropertyConstants.MessageProperty))
                     {
                         reader.Read();
                         message = reader.GetString();
                     }
-                    else if (reader.ValueSpan.SequenceEqual("succeeded"u8))
+                    else if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
                     {
                         reader.Read();
-                        isSucceeded = reader.GetBoolean();
+                        succeeded = reader.GetBoolean();
                     }
                     break;
 
@@ -32,12 +35,12 @@ internal class ResultJsonConverter : JsonConverter<Result>
             }
         }
 
-        if (isSucceeded == null)
+        if (succeeded == null)
         {
-            throw new ArgumentNullException(nameof(isSucceeded));
+            throw new ArgumentNullException(nameof(succeeded));
         }
 
-        if (isSucceeded == true)
+        if (succeeded == true)
         {
             return Result.Ok();
         }
@@ -55,11 +58,11 @@ internal class ResultJsonConverter : JsonConverter<Result>
     public override void Write(Utf8JsonWriter writer, Result value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteBoolean("succeeded"u8, value.IsSucceeded);
+        writer.WriteBoolean(options.ConvertName(JsonPropertyConstants.SucceededProperty), value.IsSucceeded);
 
         if (value.IsFailed)
         {
-            writer.WriteString("message"u8, value.Error.Message);
+            writer.WriteString(options.ConvertName(JsonPropertyConstants.MessageProperty), value.Error.Message);
         }
 
         writer.WriteEndObject();
