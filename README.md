@@ -92,7 +92,7 @@ Result result4 = await CreateAsync().ThenAsync(async x => await Service.ExecuteA
 ### Use HttpClient extensions
 
 ```csharp
-Result result1 = await httpClient.GetAsync("/").ToResultAsync();
+Result result1 = await httpClient.GetAsync("/").ReadResultFromJsonAsync();
 
-Result<int> result2 = await httpClient.GetAsync("/").ToResultAsync<int>();
+Result<int> result2 = await httpClient.GetAsync("/").ReadResultFromJsonAsync<int>();
 ```
