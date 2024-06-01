@@ -114,6 +114,51 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     }
 
     /// <summary>
+    /// Match
+    /// </summary>
+    public void Match(Action<T> succeeded, Action<IError> failed)
+    {
+        if (IsSucceeded)
+        {
+            succeeded(Value);
+        }
+        else
+        {
+            failed(Error);
+        }
+    }
+
+    /// <summary>
+    /// Match
+    /// </summary>
+    public TOut Match<TOut>(Func<T, TOut> succeeded, Func<IError, TOut> failed)
+    {
+        if (IsSucceeded)
+        {
+            return succeeded(Value);
+        }
+        else
+        {
+            return failed(Error);
+        }
+    }
+
+    /// <summary>
+    /// Converts value from <typeparamref name="T"/> to <typeparamref name="TOut"/>.
+    /// </summary>
+    public Result<TOut> ToResult<TOut>(Func<T, TOut> convert)
+    {
+        if (IsSucceeded)
+        {
+            return Result<TOut>.Ok(convert(Value));
+        }
+        else
+        {
+            return Result<TOut>.Failed(Error);
+        }
+    }
+
+    /// <summary>
     /// Creates a succeeded result.
     /// </summary>
     public static Result<T> Ok()
@@ -151,7 +196,7 @@ public readonly struct Result<T> : IResult<Result<T>>, IEquatable<Result<T>>
     public static Result<T> Failed(IError error)
     {
         return new Result<T>(error);
-    }
+    }    
 
     public static implicit operator Result<T>(T value)
     {

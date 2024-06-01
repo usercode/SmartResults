@@ -91,6 +91,36 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     }
 
     /// <summary>
+    /// Match
+    /// </summary>
+    public void Match(Action succeeded, Action<IError> failed)
+    {
+        if (IsSucceeded)
+        {
+            succeeded();
+        }
+        else
+        {
+            failed(Error);
+        }
+    }
+
+    /// <summary>
+    /// Match
+    /// </summary>
+    public TOut Match<TOut>(Func<TOut> succeeded, Func<IError, TOut> failed)
+    {
+        if (IsSucceeded)
+        {
+            return succeeded();
+        }
+        else
+        {
+            return failed(Error);
+        }
+    }
+
+    /// <summary>
     /// Creates a succeeded result.
     /// </summary>
     public static Result Ok()
@@ -182,7 +212,7 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     public static Result FailedIf(bool isFailed, Func<IError> error)
     {
         return isFailed ? Failed(error()) : Ok();
-    }
+    }   
 
     public static bool operator ==(Result left, Result right)
     {
