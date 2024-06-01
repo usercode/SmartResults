@@ -58,6 +58,11 @@ Result<int> result = Result.Ok(100);
 
 bool b = result.Match(value => true, error => false);
 ```
+### Explicit conversion
+
+```csharp
+Result<string> result = Result.Ok(100).ToResult<string>(x => x.ToString());
+```
 
 ### Implicit conversion
 
