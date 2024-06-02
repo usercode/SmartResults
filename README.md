@@ -64,7 +64,7 @@ bool b = result.Match(value => true, error => false);
 Result<string> result = Result.Ok(100).ToResult<string>(x => x.ToString());
 ```
 
-### Implicit conversion
+### Implicit operator for value
 
 ```csharp
 Result<int> result = 100;
@@ -72,7 +72,7 @@ Result<int> result = 100;
 int value = result;
 ```
 
-### Use exception flow by implicit operator
+### Exception flow by implicit operator
 ```csharp
 int value = Create(); //throws exception if result is failed
 ```
@@ -89,7 +89,7 @@ Result result3 = await CreateAsync().ThenAsync(x => Console.WriteLine(x));
 Result result4 = await CreateAsync().ThenAsync(async x => await Service.ExecuteAsync(x));
 ```
 
-### Use HttpClient extensions
+### HttpClient extensions
 
 ```csharp
 Result result1 = await httpClient.GetAsync("/").ReadResultFromJsonAsync();
