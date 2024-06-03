@@ -5,7 +5,7 @@ Lightweight .NET library to use result pattern instead of throwing exceptions.
 [![NuGet](https://img.shields.io/nuget/vpre/SmartResults.svg)](https://www.nuget.org/packages/SmartResults/)
 
 ## How to use it
-- Result and Result{T} are structs to prevent memory allocation
+- `Result` and `Result<T>` are structs to prevent memory allocation
 - Integrated JsonConverter
 - Extensions for HttpResponseMessage
 - Chaining flow
