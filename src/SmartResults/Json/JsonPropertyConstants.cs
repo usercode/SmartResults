@@ -6,7 +6,7 @@ public static class JsonPropertyConstants
 {
     public const string SucceededProperty = "Succeeded";
     public const string ValueProperty = "Value";
-    public const string MessageProperty = "Message";
+    public const string ErrorProperty = "Error";
 
     public static string ConvertName(this JsonSerializerOptions options, string name)
     {

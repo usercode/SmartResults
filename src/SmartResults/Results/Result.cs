@@ -147,14 +147,6 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     /// <summary>
     /// Creates a failed result.
     /// </summary>
-    public static Result Failed(Exception exception)
-    {
-        return Failed(new Error(exception.Message, exception));
-    }
-
-    /// <summary>
-    /// Creates a failed result.
-    /// </summary>
     public static Result Failed(IError error)
     {
         return new Result(error);

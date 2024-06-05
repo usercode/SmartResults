@@ -1,44 +1,44 @@
-﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json;
 
 namespace SmartResults.Json;
 
-internal class ResultJsonConverter : JsonConverter<Result>
+internal class ResultJsonConverter : ResultJsonConverterBase<Result>
 {
     public override Result Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         bool? succeeded = null;
-        string? message = null;
+        IError? error = null;
+
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+            throw new JsonException();
+        }
 
         while (reader.Read())
         {
-            switch (reader.TokenType)
+            if (reader.TokenType == JsonTokenType.EndObject)
             {
-                case JsonTokenType.PropertyName:
-                    string? property = reader.GetString();
+                break;
+            }
 
-                    if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
-                    {
-                        reader.Read();
-                        succeeded = reader.GetBoolean();
-                    }
-                    else if (property == options.ConvertName(JsonPropertyConstants.MessageProperty))
-                    {
-                        reader.Read();
-                        message = reader.GetString();
-                    }
-                    break;
+            if (reader.TokenType == JsonTokenType.PropertyName)
+            {
+                string? property = reader.GetString();
 
-                case JsonTokenType.EndObject:
-                    break;
+                if (property == options.ConvertName(JsonPropertyConstants.SucceededProperty))
+                {
+                    reader.Read();
+                    succeeded = reader.GetBoolean();
+                }
+                else if (property == options.ConvertName(JsonPropertyConstants.ErrorProperty))
+                {
+                    reader.Read();
+                    error = JsonSerializer.Deserialize<IError>(ref reader, ErrorOptions);
+                }
             }
         }
 
-        if (succeeded == null)
-        {
-            throw new ArgumentNullException(nameof(succeeded));
-        }
+        ArgumentNullException.ThrowIfNull(succeeded);
 
         if (succeeded == true)
         {
@@ -46,12 +46,9 @@ internal class ResultJsonConverter : JsonConverter<Result>
         }
         else
         {
-            if (message == null)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
+            ArgumentNullException.ThrowIfNull(error);
 
-            return Result.Failed(new Error(message));
+            return Result.Failed(error);
         }
     }
 
@@ -62,7 +59,8 @@ internal class ResultJsonConverter : JsonConverter<Result>
 
         if (value.IsFailed)
         {
-            writer.WriteString(options.ConvertName(JsonPropertyConstants.MessageProperty), value.Error.Message);
+            writer.WritePropertyName(options.ConvertName(JsonPropertyConstants.ErrorProperty));
+            JsonSerializer.Serialize(writer, value.Error, ErrorOptions);
         }
 
         writer.WriteEndObject();

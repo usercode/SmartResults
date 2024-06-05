@@ -5,25 +5,10 @@ namespace SmartResults.Tests;
 
 public class JsonTest
 {
-    //[Fact]
-    //public void SerializeOk()
-    //{
-    //    Result result = Result.Ok();
-
-    //    string json = JsonSerializer.Serialize(result);
-
-    //    Assert.Equal("\"Ok\"", json);
-    //}
-
-    //[Fact]
-    //public void SerializeFailed()
-    //{
-    //    Result result = Result.Failed("Something is wrong!");
-
-    //    string json = JsonSerializer.Serialize(result);
-
-    //    Assert.Equal("{\"message\":\"Something is wrong!\"}", json);
-    //}
+    public JsonTest()
+    {
+        Error.Register<ErrorA>();
+    }
 
     [Fact]
     public void IsSucceeded()
@@ -91,15 +76,30 @@ public class JsonTest
     }
 
     [Fact]
-    public void IsFailedWithComplexValue()
+    public void PolymorphicError()
     {
-        Result<ComplexValue> result = Result.Failed<ComplexValue>("Something is wrong!");
+        Result result = Result.Failed(new ErrorA("Test A"));
 
         string json = JsonSerializer.Serialize(result);
 
-        Result<ComplexValue> result2 = JsonSerializer.Deserialize<Result<ComplexValue>>(json);
+        Result result2 = JsonSerializer.Deserialize<Result>(json);
 
         Assert.True(result2.IsFailed);
+        Assert.IsType<ErrorA>(result2.Error);
+        Assert.Equal(result.Error.Message, result2.Error.Message);
+    }
+
+    [Fact]
+    public void PolymorphicErrorWithValue()
+    {
+        Result<int> result = Result<int>.Failed(new ErrorA("Error"));
+
+        string json = JsonSerializer.Serialize(result);
+
+        Result<int> result2 = JsonSerializer.Deserialize<Result<int>>(json);
+
+        Assert.True(result2.IsFailed);
+        Assert.IsType<ErrorA>(result2.Error);
         Assert.Equal(result.Error.Message, result2.Error.Message);
     }
 }
