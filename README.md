@@ -104,6 +104,8 @@ Result<int> result2 = await httpClient.GetAsync("/").ReadResultFromJsonAsync<int
 ```csharp
 public class PermissionError : IError { }
 
+Error.Register<PermissionError>();
+
 Result result = Result.Failed(new PermissionError("Error"));
 
 string json = JsonSerializer.Serialize(result);
