@@ -6,7 +6,9 @@ Lightweight .NET library to use result pattern instead of throwing exceptions.
 
 ## How to use it
 - `Result` and `Result<T>` are structs to prevent memory allocation
-- Integrated JsonConverter
+- Support for JSON
+  - Integrated JsonConverter for `Result` and `Result<T>`
+  - Polymorphic `Error` objects
 - Extensions for HttpResponseMessage
 - Chaining flow
 - Exception flow
@@ -95,4 +97,18 @@ Result result4 = await CreateAsync().ThenAsync(async x => await Service.ExecuteA
 Result result1 = await httpClient.GetAsync("/").ReadResultFromJsonAsync();
 
 Result<int> result2 = await httpClient.GetAsync("/").ReadResultFromJsonAsync<int>();
+```
+
+### Supports polymorphic error objects for JSON
+
+```csharp
+public class PermissionError : IError { }
+
+Result result = Result.Failed(new PermissionError("Error"));
+
+string json = JsonSerializer.Serialize(result);
+
+Result result2 = JsonSerializer.Deserialize<Result>(json);
+
+result2.Error //PermissionError
 ```
