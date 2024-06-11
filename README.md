@@ -45,7 +45,6 @@ else
 ```csharp
 Result<int> result = Result.Failed("Something is wrong!");
 Result<int> result = Result.Failed(new Error(..));
-Result<int> result = Result.Failed(new Exception());
 
 if (result.IsFailed)
 {
