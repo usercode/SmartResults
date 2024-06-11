@@ -78,7 +78,7 @@ public class JsonTest
     [Fact]
     public void PolymorphicError()
     {
-        Result result = Result.Failed(new ErrorA("Test A"));
+        Result result = Result.Failed(new ErrorA("Test A") { Value = "123" });
 
         string json = JsonSerializer.Serialize(result);
 
@@ -87,12 +87,13 @@ public class JsonTest
         Assert.True(result2.IsFailed);
         Assert.IsType<ErrorA>(result2.Error);
         Assert.Equal(result.Error.Message, result2.Error.Message);
+        Assert.Equal(((ErrorA)result.Error).Value, ((ErrorA)result2.Error).Value);
     }
 
     [Fact]
     public void PolymorphicErrorWithValue()
     {
-        Result<int> result = Result<int>.Failed(new ErrorA("Error"));
+        Result<int> result = Result<int>.Failed(new ErrorA("Error") { Value = "123" });
 
         string json = JsonSerializer.Serialize(result);
 
@@ -101,5 +102,6 @@ public class JsonTest
         Assert.True(result2.IsFailed);
         Assert.IsType<ErrorA>(result2.Error);
         Assert.Equal(result.Error.Message, result2.Error.Message);
+        Assert.Equal(((ErrorA)result.Error).Value, ((ErrorA)result2.Error).Value);
     }
 }
