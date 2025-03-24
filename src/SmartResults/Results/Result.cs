@@ -186,7 +186,7 @@ public readonly struct Result : IResult<Result>, IEquatable<Result>
     {
         try
         {
-            await action();
+            await action().ConfigureAwait(false);
 
             return Ok();
         }

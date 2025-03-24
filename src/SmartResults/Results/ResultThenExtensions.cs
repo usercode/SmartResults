@@ -32,7 +32,7 @@ public static class ResultThenExtensions
     {
         if (result.IsSucceeded)
         {
-            return await action(result);
+            return await action(result).ConfigureAwait(false);
         }
         else
         {
@@ -47,7 +47,7 @@ public static class ResultThenExtensions
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
     {
-        TResultIn r = await result;
+        TResultIn r = await result.ConfigureAwait(false);
 
         if (r.IsSucceeded)
         {
@@ -66,11 +66,11 @@ public static class ResultThenExtensions
         where TResultIn : IResult<TResultIn>
         where TResultOut : IResult<TResultOut>
     {
-        TResultIn r = await result;
+        TResultIn r = await result.ConfigureAwait(false);
 
         if (r.IsSucceeded)
         {
-            return await action(r);
+            return await action(r).ConfigureAwait(false);
         }
         else
         {
