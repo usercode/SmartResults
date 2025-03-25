@@ -11,7 +11,7 @@ public static class HttpResponseMessageExtensions
 {
     public static async Task<Result> ReadResultFromJsonAsync(this Task<HttpResponseMessage> responseTask, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        return await (await responseTask).ReadResultFromJsonAsync(jsonSerializerOptions).ConfigureAwait(false);
+        return await (await responseTask.ConfigureAwait(false)).ReadResultFromJsonAsync(jsonSerializerOptions).ConfigureAwait(false);
     }
 
     public static async Task<Result> ReadResultFromJsonAsync(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
@@ -23,7 +23,7 @@ public static class HttpResponseMessageExtensions
 
     public static async Task<Result<T>> ReadResultFromJsonAsync<T>(this Task<HttpResponseMessage> responseTask, JsonSerializerOptions? jsonSerializerOptions = null)
     {
-        return await (await responseTask).ReadResultFromJsonAsync<T>(jsonSerializerOptions).ConfigureAwait(false);
+        return await (await responseTask.ConfigureAwait(false)).ReadResultFromJsonAsync<T>(jsonSerializerOptions).ConfigureAwait(false);
     }
 
     public static async Task<Result<T>> ReadResultFromJsonAsync<T>(this HttpResponseMessage response, JsonSerializerOptions? jsonSerializerOptions = null)
